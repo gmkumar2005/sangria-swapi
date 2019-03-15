@@ -23,12 +23,15 @@ libraryDependencies += "org.sangria-graphql" %% "sangria-circe" % "1.2.1"
 libraryDependencies += "io.circe" %% "circe-optics" % circeVersion
 
 libraryDependencies += "com.dripower" %% "play-circe" % "2711.0"
+libraryDependencies += "com.stephenn" %% "scalatest-json-jsonassert" % "0.0.3"
+libraryDependencies += "org.typelevel" %% "cats-core" % "1.6.0"
 
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
-  "io.circe" %% "circe-parser"
+  "io.circe" %% "circe-parser",
+  "io.circe" %% "circe-optics",
 ).map(_ % circeVersion)
 
 

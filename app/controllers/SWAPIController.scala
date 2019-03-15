@@ -1,62 +1,42 @@
 package controllers
 
 import akka.actor.ActorSystem
-//import play.api.libs.json._
 import play.api.Configuration
-import play.api.mvc._
+import play.api.libs.json.JsValue
 import sangria.execution._
 import sangria.parser.{QueryParser, SyntaxError}
-//import sangria.marshalling.playJson._
-import models.{CharacterRepo, SchemaDefinition}
-import sangria.execution.deferred.DeferredResolver
-import sangria.renderer.SchemaRenderer
 import sangria.slowlog.SlowLog
+
+import scala.concurrent.ExecutionContext
 //import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scala.util.{Failure, Success}
 import io.circe.Json
-import cats.syntax.either._
-import io.circe._, io.circe.parser._
-import io.circe.generic.auto._
 import io.circe.syntax._
-import sangria.macros._
-import sangria.marshalling.circe._
-import sangria.renderer.SchemaRenderer
-import io.circe.Json
-import io.circe.generic.auto._
-import io.circe.syntax._
-import cats.syntax.either._
-import io.circe._, io.circe.parser._
 import models.{CharacterRepo, SchemaDefinition}
 import play.api.libs.circe.Circe
 import play.api.mvc._
 import sangria.execution.Executor
 import sangria.execution.deferred.DeferredResolver
-import sangria.macros._
 import sangria.marshalling.circe._
-import sangria.renderer.SchemaRenderer
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 
 class SWAPIController(system: ActorSystem, config: Configuration, cc: ControllerComponents) extends AbstractController(cc) with Circe {
-
-  import system.dispatcher
-
+ // hack for intelij
+  implicit val globalExecutionContext: ExecutionContext =  scala.concurrent.ExecutionContext.Implicits.global
 
   def graphql(query: String, variables: Option[String], operation: Option[String]): Action[AnyContent] = Action.async { request ⇒
     executeQuery(query, variables map parseVariables, operation, isTracingEnabled(request))
   }
 
-  def graphqlBody = Action.async(parse.json) { request ⇒
+  def graphqlBody :Action[JsValue] = Action.async(parse.json) { request ⇒
     val query = (request.body \ "query").as[String]
     val operation = (request.body \ "operationName").asOpt[String]
 
     val variables = (request.body \ "variables").asOpt[String]
 
-    executeQuery(query, variables map parseVariables , operation, isTracingEnabled(request))
+    executeQuery(query, variables map parseVariables, operation, isTracingEnabled(request))
   }
 
   private def parseVariables(variables: String) =
@@ -100,7 +80,8 @@ class SWAPIController(system: ActorSystem, config: Configuration, cc: Controller
         throw error
     }
 
-  def isTracingEnabled(request: Request[_]) = request.headers.get("X-Apollo-Tracing").isDefined
+  def isTracingEnabled(request: Request[_]):Boolean = request.headers.get("X-Apollo-Tracing").isDefined
+//  def isTracingEnabled(request: Request[_]) = true
 
 
   lazy val exceptionHandler = ExceptionHandler {

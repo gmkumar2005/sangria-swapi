@@ -9,12 +9,19 @@ It's available here:
 
 [http://try.sangria-graphql.org](http://try.sangria-graphql.org)
 
+This project sangria-swapi is based on https://github.com/sangria-graphql/sangria-playground.git 
+Uses 
+- Sangria 
+- Circe 
+- Macwire  
+- Test cases for controllers 
+
 This is just a small demonstration. It really gets interesting when you start to play with the schema on the server side. Fortunately it's
 pretty easy to do. Since it's a simple Play application, all it takes to start playground locally and start playing with the schema is this:
 
 ```bash
-$ git clone https://github.com/sangria-graphql/sangria-playground.git
-$ cd sangria-playground
+$ git clone https://github.com/gmkumar2005/sangria-swapi.git
+$ cd sangria-swapi
 $ sbt run
 ```
 
