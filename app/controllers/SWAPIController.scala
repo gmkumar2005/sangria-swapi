@@ -56,18 +56,13 @@ class SWAPIController(system: ActorSystem, config: Configuration, cc: Controller
             QueryReducer.rejectMaxDepth[CharacterRepo](15),
             QueryReducer.rejectComplexQueries[CharacterRepo](4000, (_, _) ⇒ TooComplexQueryError)),
           middleware = if (tracing) SlowLog.apolloTracing :: Nil else Nil).map { data => Ok(data) }
-      //          .recover {
-      //            case error1: QueryAnalysisError ⇒ BadRequest  → Future {
-      //              // Call some blocking API
-      //              Ok(error1.resolveError)
-      //            }
-      //            case error2: ErrorWithResolver ⇒ InternalServerError →  Future {
-      //              // Call some blocking API
-      //              Ok(error2.resolveError)
-      //            }
-      //          }
-
-
+          .recover{
+            case error1: QueryAnalysisError => BadRequest(error1.resolveError)
+            case error2: ErrorWithResolver => BadRequest(error2.resolveError)
+            case _ => {
+              BadRequest("Failed")
+            }
+          }
       // can't parse GraphQL query, return error
       case Failure(error: SyntaxError) =>
         Future.successful(BadRequest(Json.obj(
