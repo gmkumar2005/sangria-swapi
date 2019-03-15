@@ -5,7 +5,7 @@
 # Home page
 GET        /                     controllers.SangriaPlaygroundController.index
 GET        /graphql              controllers.SWAPIController.graphql(query: String, variables: Option[String], operation: Option[String])
-## POST       /graphql              controllers.SWAPIController.graphqlBody
+POST       /graphql              controllers.SWAPIController.graphqlBody
 GET        /render-schema        controllers.SangriaPlaygroundController.renderSchema
 GET        /playground           controllers.SangriaPlaygroundController.playground
 
